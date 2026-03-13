@@ -1,0 +1,26 @@
+{
+  "name": "cga-automation-challenge",
+  "version": "1.0.0",
+  "description": "QA Automation Challenge for Constellation Automotive Group",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucasf14/cga-automation-challenge.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/lucasf14/cga-automation-challenge/issues"
+  },
+  "homepage": "https://github.com/lucasf14/cga-automation-challenge#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.5.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1"
+  }
+}
