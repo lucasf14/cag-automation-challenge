@@ -1,5 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { createApiClient } from '../clients/apiClient';
+import Ajv from "ajv";
+import { userSchema } from "../schemas/user.schema";
+
 
 // A1. User CRUD Operations
 test('GET Users', async ({}) => {
@@ -18,9 +21,11 @@ test('GET Users', async ({}) => {
 });
 
 
-test('GET User by id', async ({}) => {
+test('GET User by id (validating schema)', async ({}) => {
   const api = await createApiClient();
   const userId = 2;
+  const ajv = new Ajv();
+  const validateSchema = ajv.compile(userSchema);
 
   const response = await api.get(`/api/users/${userId}`);
   expect(response.status()).toBe(200);
@@ -28,6 +33,11 @@ test('GET User by id', async ({}) => {
   const body = await response.json();
   expect(body).toHaveProperty('data');
 
+  // Validate the response against the schema
+  const valid = validateSchema(body);
+  expect(valid, JSON.stringify(validateSchema.errors)).toBe(true);
+
+  // Validate the user data
   const user = body.data;
 
   expect(user).toBeDefined();
@@ -161,4 +171,63 @@ test('POST Login without email', async ({}) => {
   const body = await response.json();
   expect(body).toHaveProperty('error');
   expect(body.error).toBe(errorMessage);
+});
+
+
+// A3. Advanced Scenarios
+test('GET User by id with invalid id', async ({}) => {
+  const api = await createApiClient();
+  const userId = 999;
+
+  const response = await api.get(`/api/users/${userId}`);
+  expect(response.status()).toBe(404);
+
+  const body = await response.json();
+
+  expect(body).toEqual({});
+});
+
+
+test('GET Users with delay', async ({}) => {
+  const api = await createApiClient();
+  const delay = 3;
+  const reasonableDelay = 5000;
+  
+  const startTime = Date.now();
+  const response = await api.get(`/api/users?delay=${delay}`);
+  const endTime = Date.now();
+  const responseTime = endTime - startTime;
+  
+  expect(response.status()).toBe(200);
+  expect(responseTime).toBeGreaterThanOrEqual(3000);
+  expect(responseTime).toBeLessThan(reasonableDelay);
+
+  const body = await response.json();
+
+  expect(body.data).toBeDefined();
+  expect(body.data.length).toBeGreaterThan(0);
+});
+
+
+test('GET User by id (data-driven)', async ({}) => {
+  const api = await createApiClient();
+  const data = [
+    { id: 1, first_name: 'George', last_name: 'Bluth', email: 'george.bluth@reqres.in' },
+    { id: 2, first_name: 'Janet', last_name: 'Weaver', email: 'janet.weaver@reqres.in' },
+    { id: 3, first_name: 'Emma', last_name: 'Wong', email: 'emma.wong@reqres.in' },
+    { id: 4, first_name: 'Eve', last_name: 'Holt', email: 'eve.holt@reqres.in' },
+  ];
+
+  for (const user of data) {
+    const response = await api.get(`/api/users/${user.id}`);
+    expect(response.status()).toBe(200);
+
+    const body = await response.json();
+
+    const data = body.data;
+    expect(data.id).toBe(user.id);
+    expect(data.first_name).toBe(user.first_name);
+    expect(data.last_name).toBe(user.last_name);
+    expect(data.email).toBe(user.email);
+  }
 });
