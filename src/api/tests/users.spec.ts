@@ -211,14 +211,14 @@ test('GET Users with delay', async ({}) => {
 
 test('GET User by id (data-driven)', async ({}) => {
   const api = await createApiClient();
-  const data = [
+  const users = [
     { id: 1, first_name: 'George', last_name: 'Bluth', email: 'george.bluth@reqres.in' },
     { id: 2, first_name: 'Janet', last_name: 'Weaver', email: 'janet.weaver@reqres.in' },
     { id: 3, first_name: 'Emma', last_name: 'Wong', email: 'emma.wong@reqres.in' },
     { id: 4, first_name: 'Eve', last_name: 'Holt', email: 'eve.holt@reqres.in' },
   ];
 
-  for (const user of data) {
+  for (const user of users) {
     const response = await api.get(`/api/users/${user.id}`);
     expect(response.status()).toBe(200);
 
