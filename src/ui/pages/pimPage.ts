@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 
 export class PIMPage {
   readonly page: Page;
@@ -39,7 +39,7 @@ export class PIMPage {
     this.toastMessage = this.successToast.locator('.oxd-text--toast-message');
   }
 
-  async addEmployee(firstName: string, lastName: string) {
+  async addEmployee(firstName: string, lastName: string, id: string) {
     await this.addEmployeeButton.waitFor({ state: 'visible' });
     await this.addEmployeeButton.click();
 
@@ -47,45 +47,60 @@ export class PIMPage {
     await this.lastNameInput.waitFor({ state: 'visible' });
     await this.employeeIdInput.waitFor({ state: 'visible' });
     await this.saveButton.waitFor({ state: 'visible' });
-    const id = (await this.employeeIdInput.inputValue()).trim();
 
     await this.firstNameInput.fill(firstName);
     await this.lastNameInput.fill(lastName);
+    await this.employeeIdInput.fill(id);
     await this.saveButton.click();
-
-    return id
   }
 
-  async searchEmployee(name: string) {
+  async searchEmployee(firstName: string, lastName: string, id?: string) {
+    const fullName = `${firstName}  ${lastName}`;
     await this.employeeListButton.waitFor({ state: 'visible' });
     await this.employeeListButton.click();
 
     await this.employeeNameInput.waitFor({ state: 'visible' });
-    await this.employeeNameInput.fill(name);
-    await this.searchButton.click();
-  }
+    await this.employeeNameInput.fill(fullName);
 
-  async searchEmployeeWithRetry(name: string, employeeId: string, maxRetries = 5) {
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      await this.searchEmployee(name);
-      await this.employeeRows.first().waitFor({ state: 'visible', timeout: 2000 }).catch(() => {});
-
-      const rowCount = await this.employeeRows.count();
-
-      let found = false;
-      for (let i = 0; i < rowCount; i++) {
-        const rowText = await this.employeeRows.nth(i).textContent() || '';
-        if (rowText.includes(employeeId) && rowText.includes(name)) {
-            found = true;
-            break;
-        }
-      }
-
-      if (found) return;
-
-      await this.page.waitForTimeout(1000);
+    if (id) {
+      await this.employeeIdInput.waitFor({ state: 'visible' });
+      await this.employeeIdInput.fill(id);
     }
 
-    throw new Error(`Employee "${name}"  not found after ${maxRetries} retries`);
+    const recordsBeforeSearch = (await this.searchResultsMessage.textContent())?.trim() || '';
+    await this.searchButton.click();
+    await expect(this.searchResultsMessage).not.toHaveText(recordsBeforeSearch, { timeout: 5000 });
+  }
+
+  async checkEmployeeSearchResults(firstName: string, lastName: string, id?: string, maxRetries = 5) {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      const messageText = (await this.searchResultsMessage.textContent())?.trim() || '';
+      const rowCount = await this.employeeRows.count();
+
+      if (messageText.includes('No Records Found')) {
+        expect(rowCount).toBe(0);
+        return;
+      } else {
+        expect(rowCount).toBeGreaterThan(0);
+        let found = false;
+        for (let i = 0; i < rowCount; i++) {
+          const rowText = (await this.employeeRows.nth(i).textContent()) || '';
+          if (id) {
+            if (rowText.includes(firstName) && rowText.includes(lastName) && rowText.includes(id)) {
+              found = true;
+              break;
+            }
+          } else {
+            if (rowText.includes(firstName) && rowText.includes(lastName)) {
+              found = true;
+              break;
+            }
+          }
+        }
+        if (found) return;
+      }
+      await this.page.waitForTimeout(1000);
+    }
+    throw new Error(`Employee "${firstName} ${lastName}"${id ? ` with ID ${id}` : ''} not found after ${maxRetries} retries`);
   }
 }

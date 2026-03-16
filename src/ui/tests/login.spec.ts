@@ -1,13 +1,7 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures/pagesFixture';
 import { LoginPage } from '../pages/loginPage';
-import { DashboardPage } from '../pages/dashboardPage';
 
-test('Successful login', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  const dashboardPage = new DashboardPage(page);
-  await loginPage.goto(process.env.UI_BASE_URL || '');
-  await loginPage.login(process.env.UI_USERNAME || '', process.env.UI_PASSWORD || '');
-
+test('Successful login', async ({ dashboardPage, page }) => {
   await expect(page).toHaveURL(/dashboard/);
   await expect(dashboardPage.title).toBeVisible();
   await expect(dashboardPage.title).toHaveText('Dashboard');
@@ -38,10 +32,7 @@ test('Unsuccessful login with empty fields', async ({ page }) => {
   await expect(loginPage.passwordRequired).toHaveText('Required');
 });
 
-test('Successful login, logout and redirect to login page', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  await loginPage.goto(process.env.UI_BASE_URL || '');
-  await loginPage.login(process.env.UI_USERNAME || '', process.env.UI_PASSWORD || '');
+test('Successful login, logout and redirect to login page', async ({ loginPage, page }) => {
   await expect(page).toHaveURL(/dashboard/);
 
   await loginPage.logout();
