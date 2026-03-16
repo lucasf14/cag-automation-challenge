@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/loginPage';
 import { DashboardPage } from '../pages/dashboardPage';
 
-test('Successful login', async ({ page }) => {  
+test('Successful login', async ({ page }) => {
   const loginPage = new LoginPage(page);
   const dashboardPage = new DashboardPage(page);
   await loginPage.goto(process.env.UI_BASE_URL || '');
@@ -20,7 +20,7 @@ test('Successful login', async ({ page }) => {
   await expect(dashboardPage.quickLaunchWidget).toHaveScreenshot(`test-results/after-login-success-quick-launch.png`);
 });
 
-test('Unsuccessful login with invalid credentials', async ({ page }) => {  
+test('Unsuccessful login with invalid credentials', async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.goto(process.env.UI_BASE_URL || '');
   await loginPage.login('qwerty', '123456');
@@ -29,7 +29,7 @@ test('Unsuccessful login with invalid credentials', async ({ page }) => {
   await expect(loginPage.errorMessage).toHaveText('Invalid credentials');
 });
 
-test('Unsuccessful login with empty fields', async ({ page }) => {  
+test('Unsuccessful login with empty fields', async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.goto(process.env.UI_BASE_URL || '');
   await loginPage.login('', '');
@@ -38,7 +38,7 @@ test('Unsuccessful login with empty fields', async ({ page }) => {
   await expect(loginPage.passwordRequired).toHaveText('Required');
 });
 
-test('Successful login, logout and redirect to login page', async ({ page }) => {  
+test('Successful login, logout and redirect to login page', async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.goto(process.env.UI_BASE_URL || '');
   await loginPage.login(process.env.UI_USERNAME || '', process.env.UI_PASSWORD || '');

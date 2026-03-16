@@ -3,7 +3,6 @@ import { LoginPage } from '../pages/loginPage';
 import { DashboardPage } from '../pages/dashboardPage';
 import { PIMPage } from '../pages/pimPage';
 
-/*
 test('Navigate to PIM and verify the employee list is displayed', async ({ page }) => {
   const loginPage = new LoginPage(page);
   const dashboardPage = new DashboardPage(page);
@@ -18,8 +17,7 @@ test('Navigate to PIM and verify the employee list is displayed', async ({ page 
   await expect(pimPage.employeeRows.first()).toBeVisible();
   expect(await pimPage.employeeRows.count()).toBeGreaterThan(0);
 });
-*/
-/*
+
 test('Search for an employee', async ({ page }) => {
   const fullName = 'Nowhere To Be Found';
   const loginPage = new LoginPage(page);
@@ -74,7 +72,7 @@ test('Add new employee and verify it appears in search', async ({ page }) => {
   await loginPage.goto(process.env.UI_BASE_URL || '');
   await loginPage.login(process.env.UI_USERNAME || '', process.env.UI_PASSWORD || '');
   await dashboardPage.goToPIM();
-  
+
   const employeeId = await pimPage.addEmployee(firstName, lastName);
   await expect(pimPage.successToast).toBeVisible();
   await expect(pimPage.toastTitle).toHaveText('Success');
@@ -100,11 +98,10 @@ test('Sidebar Validation', async ({ page }) => {
 
   await dashboardPage.goToMyInfo();
   await expect(page).toHaveURL(/viewPersonalDetails/);
-  
+
   await dashboardPage.goToDirectory();
   await expect(page).toHaveURL(/directory/);
 
   await dashboardPage.goToBuzz();
   await expect(page).toHaveURL(/buzz/);
 });
-*/

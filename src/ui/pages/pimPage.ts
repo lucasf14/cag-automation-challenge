@@ -48,13 +48,11 @@ export class PIMPage {
     await this.employeeIdInput.waitFor({ state: 'visible' });
     await this.saveButton.waitFor({ state: 'visible' });
     const id = (await this.employeeIdInput.inputValue()).trim();
-    console.log(`Predefined employee ID: ${id}`);
 
     await this.firstNameInput.fill(firstName);
-    await this.lastNameInput.fill(lastName);    
+    await this.lastNameInput.fill(lastName);
     await this.saveButton.click();
 
-    console.log(`Created employee with ID: ${id}`);
     return id
   }
 
@@ -66,18 +64,17 @@ export class PIMPage {
     await this.employeeNameInput.fill(name);
     await this.searchButton.click();
   }
-  
+
   async searchEmployeeWithRetry(name: string, employeeId: string, maxRetries = 5) {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       await this.searchEmployee(name);
       await this.employeeRows.first().waitFor({ state: 'visible', timeout: 2000 }).catch(() => {});
 
       const rowCount = await this.employeeRows.count();
-      
+
       let found = false;
       for (let i = 0; i < rowCount; i++) {
         const rowText = await this.employeeRows.nth(i).textContent() || '';
-        console.log(`Attempt ${attempt + 1} - Row ${i + 1}:`, rowText);
         if (rowText.includes(employeeId) && rowText.includes(name)) {
             found = true;
             break;

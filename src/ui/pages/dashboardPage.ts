@@ -7,7 +7,6 @@ export class DashboardPage {
   readonly sidePanel: Locator;
   readonly widgets: Locator;
   readonly quickLaunchWidget: Locator;
-  readonly quickLaunchWidgetItems: Locator;
 
   // Side panel locators
   readonly admin: Locator;
@@ -30,7 +29,6 @@ export class DashboardPage {
     this.sidePanel = page.locator('.oxd-sidepanel');
     this.widgets = page.locator('.orangehrm-dashboard-widget');
     this.quickLaunchWidget = page.locator('.orangehrm-quick-launch');
-    this.quickLaunchWidgetItems = this.quickLaunchWidget.locator('.orangehrm-quick-launch-card');
     this.admin = this.sidePanel.locator('.oxd-main-menu-item', { hasText: 'Admin' });
     this.pim = this.sidePanel.locator('.oxd-main-menu-item', { hasText: 'PIM' });
     this.leave = this.sidePanel.locator('.oxd-main-menu-item', { hasText: 'Leave' });
@@ -79,8 +77,8 @@ export class DashboardPage {
     await this.sidePanel.waitFor({ state: 'visible' });
     await this.myInfo.waitFor({ state: 'visible' });
     await this.myInfo.click();
-  } 
-  
+  }
+
   async goToPerformance() {
     await this.sidePanel.waitFor({ state: 'visible' });
     await this.performance.waitFor({ state: 'visible' });

@@ -23,14 +23,14 @@ export class LoginPage {
     this.errorMessage = page.locator('.oxd-alert-content-text');
     this.usernameContainer = page.locator('.oxd-input-group', { hasText: 'Username' });
     this.passwordContainer = page.locator('.oxd-input-group', { hasText: 'Password' });
-    this.usernameRequired = this.usernameContainer.locator('.oxd-input-field-error-message'); 
+    this.usernameRequired = this.usernameContainer.locator('.oxd-input-field-error-message');
     this.passwordRequired = this.passwordContainer.locator('.oxd-input-field-error-message');
   }
 
   async goto(url: string) {
     await this.page.goto(url);
   }
-  
+
   async fillInput(input: Locator, text: string) {
     await input.waitFor({ state: 'visible' });
     await input.fill(text);
