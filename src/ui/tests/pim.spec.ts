@@ -1,4 +1,5 @@
 import { test, expect } from '../fixtures/pagesFixture';
+import { generateEmployee } from '../../utils/dataGenerator';
 
 test('Navigate to PIM and verify the employee list is displayed', async ({ dashboardPage, pimPage, page }) => {
   await dashboardPage.goToPIM();
@@ -9,18 +10,14 @@ test('Navigate to PIM and verify the employee list is displayed', async ({ dashb
 });
 
 test('Search for an employee', async ({ dashboardPage, pimPage }) => {
-  const firstName = 'Nowhere';
-  const lastName = 'To Be Found';
+  const { firstName, lastName } = generateEmployee();
   await dashboardPage.goToPIM();
   await pimPage.searchEmployee(firstName, lastName);
   await pimPage.checkEmployeeSearchResults(firstName, lastName)
 });
 
 test('Add new employee and verify it appears in search', async ({ dashboardPage, pimPage }) => {
-  const firstName = 'Lemmy';
-  const lastName = 'Kilmister';
-  const id = Date.now().toString().slice(-10);
-
+  const { firstName, lastName, id } = generateEmployee();
   await dashboardPage.goToPIM();
   await pimPage.addEmployee(firstName, lastName, id);
   await expect(pimPage.successToast).toBeVisible();
