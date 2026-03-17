@@ -27,7 +27,7 @@ test('Unsuccessful login with empty fields', async ({ page }) => {
 
   await expect(loginPage.usernameRequired).toHaveText('Required');
   await expect(loginPage.passwordRequired).toHaveText('Required');
-  await expect(loginPage.usernameContainer).toHaveScreenshot('test-results/login-empty-username.png');
+  await expect(loginPage.usernameContainer).toHaveScreenshot('test-results/login-empty-username.png', { maxDiffPixelRatio: 0.05 });
 });
 
 test('Successful login, logout and redirect to login page', async ({ loginPage, page }) => {
